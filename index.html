@@ -1,0 +1,55 @@
+<html id='GithubPages Personal WEBAPI - Alpha'>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script type="text/javascript">
+			window.onload=()=>{
+				console.log(
+					'GithubPages Personal WEBAPI\n',
+					'Version: Alpha1.1.0.220627'
+				)
+			}
+		</script>
+	</head>
+	<body>
+		<script>
+			const _retData = {
+				'_200': [
+					{
+						'status': '200',
+						'returnString': [
+							'null',
+							'https:\/\/github.com\/Qianshi-OriStudio\/EzUpdate\/archive\/refs\/heads\/main.zip'
+						],
+					},
+				],
+				'_404': {
+					'status': '404',
+					'returnString': 'Unknown Search-Type.',
+				}
+			}
+			function AnalyseSearchPath(argPath) {
+				var path = argPath.indexOf('?') != 0 ? path : argPath.slice(1,argPath.length);
+				if (path.slice(path.length - 1,path.length) == '/' && window.location.hostname == '127.0.0.1'){
+				// 这里是为了解决在 Sublime Text3 Server 调试中出现结尾 / 时解析错误的问题。
+					path = path.slice(0,path.length - 1);
+				};
+				path = path.replace(/\=/g,'": "').replace(/\&/g,'","')
+				return JSON.parse('{"'+path+'"}');
+			}
+			function returnProcData(data) {
+				var retData = data
+				retData = Array.isArray(retData) != true ? JSON.stringify(retData) : retData;
+				document.getElementsByTagName('html')[0].innerHTML = retData;
+			}
+			var searchData = AnalyseSearchPath(window.location.search);
+			switch(searchData['type']){
+				case 'get':
+					returnProcData(_retData['_200'][0])
+					break;
+				default:
+					returnProcData(_retData['_404'])
+			};
+		</script>
+	</body>
+</html>
